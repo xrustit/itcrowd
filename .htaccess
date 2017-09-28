@@ -1,0 +1,12 @@
+RewriteEngine on
+RewriteRule ^([a-zA-Z0-9_-]+)$ index.php?page=$1  [QSA,L]
+RewriteRule ^([a-zA-Z0-9_-]+)/$ index.php?page=$1  [QSA,L]
+
+
+# by support team
+<Files / >
+AuthType Basic
+AuthName "please use your login and password"
+AuthUserFile "/var/www/alpufa/data/etc/users/htpasswd_alpufa"  
+Require valid-user
+</Files>
