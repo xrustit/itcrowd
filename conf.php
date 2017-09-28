@@ -1,6 +1,6 @@
 <?php
 ########################################
-#	xrustit - configuration file
+#	itcrowd - configuration file
 ########################################
 //Access information to MySQL database
 $CONF_DB = array (
