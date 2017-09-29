@@ -1,7 +1,7 @@
 <div id="footer" style=" padding-bottom: 70px; ">
     <div class="container" style=" padding: 20px; ">
         <div class="col-md-8">
-            <p class="text-muted credit"><small>Redone by <a href="mailto:xrustit@gmail.com">R.Kashapov</a> (с) 2016.</p>
+            <p class="text-muted credit"><small>(с) 2016.</p>
             </small>
         </div>
         <?php
