@@ -840,7 +840,7 @@ $stmt->execute(array_merge($vv,$paramss));
                 <th><center><div id="sort_prio" action="<?=$_SESSION['helpdesk_sort_prio'];?>"><i class="fa fa-info-circle" data-toggle="tooltip" data-placement="bottom" title="<?=lang('t_LIST_prio');?>"></i><?=$prio_icon;?></div></center></th>
                 <th><center><div id="sort_subj" action="<?=$_SESSION['helpdesk_sort_subj'];?>"><?=lang('t_LIST_subj');?><?=$subj_icon;?></div></center></th>
                 <th><center><div id="sort_cli" class="title" action="<?=$_SESSION['helpdesk_sort_clientid'];?>"><?=lang('t_LIST_worker');?><?=$cli_icon;?></div></center></th>
-                <th><center><?=lang('t_LIST_create');?></center></th>
+                <!--<th><center><?=lang('t_LIST_create');?></center></th>-->
                 <th><center><?=lang('t_LIST_ago');?></center></th>
                 <th><center><div id="sort_init" action="<?=$_SESSION['helpdesk_sort_userinitid'];?>"><?=lang('t_LIST_init');?><?=$init_icon;?></div></center></th>
                 <th><center><?=lang('t_LIST_to');?></center></th>
@@ -1035,9 +1035,9 @@ $lock_st=""; $muclass="";
                 <tr id="tr_<?php echo $row['id']; ?>" class="tbl-item <?=$err?> <?=$outc?> <?=$style?>">
                     <td style=" vertical-align: middle; "><small class="<?=$muclass;?>"><center><?php echo $row['id']; ?></center></small></td>
                     <td style=" vertical-align: middle; "><small class="<?=$muclass;?>"><center><?=$prio?></center></small></td>
-                    <td style=" vertical-align: middle; "><a class="<?=$muclass;?>" data-toggle="tooltip" data-placement="bottom" title="<?=make_html($row['subj'], 'no')?>" href="ticket?<?php echo $row['hash_name']; ?>"><?=$vtdate;?> <?php cutstr(make_html($row['subj'], 'no')); ?></a></td>
-                    <td class="title" style=" vertical-align: middle; "><small class="<?=$muclass;?>"><?php name_of_client($row['client_id']); ?></small></td>
-                    <td style=" vertical-align: middle; "><small class="<?=$muclass;?>"><center><time id="c" datetime="<?=$row['date_create']; ?>"></time></center></small></td>
+                     <td style=" vertical-align: middle; "><a class="<?=$muclass;?>" data-toggle="tooltip" data-placement="bottom" title="<?=$row['date_create']; ?>" href="ticket?<?php echo $row['hash_name']; ?>"><?=$vtdate;?> <?php cutstr(make_html($row['subj'], 'no')); ?></a></td>
+                     <td class="title" style=" vertical-align: middle; "><small class="<?=$muclass;?>"><?php name_of_client($row['client_id']); ?></small></td>
+                    <!--<td style=" vertical-align: middle; "><small class="<?=$muclass;?>"><center><time id="c" datetime="<?=$row['date_create']; ?>"></time></center></small></td>-->
                     <td style=" vertical-align: middle; "><small class="<?=$muclass;?>"><center><?php get_unit_name($row['unit_id']); ?></center></small></td>
 
                     <td style=" vertical-align: middle; "><small class="<?=$muclass;?>"><?php echo nameshort(name_of_user_ret($row['user_init_id'])); ?></small></td>
