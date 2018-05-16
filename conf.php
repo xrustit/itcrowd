@@ -5,9 +5,9 @@
 //Access information to MySQL database
 $CONF_DB = array (
 	'host' 		=> '', 
-	'username'	=> 'zaya',
+	'username'	=> '',
 	'password'	=> '',
-	'db_name'	=> 'zayavka'
+	'db_name'	=> ''
 );
 //System configuration variables and some options
 $CONF_HD = array (
