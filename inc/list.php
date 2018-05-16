@@ -166,20 +166,35 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
 				-->
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-right">
+                        <div class="btn-group btn-group-xs" >
+                            <button  id="sort_list" value="main" type="button" class="btn btn-primary <?=$button_sort_in['main'];?>" data-toggle="tooltip" data-placement="bottom" title="<?=lang('ticket_sort_def')?>"><i class="fa fa-home"></i> </button>  
+                            <button  id="sort_list" value="free" data-toggle="tooltip" data-placement="bottom" title="<?=lang('STATS_t_free')?>" type="button" class="btn btn-info <?=$button_sort_in['free'];?>"><i class="fa fa-circle-thin"></i> </button>    
+                            <button  id="sort_list" value="ok" data-toggle="tooltip" data-placement="bottom" title="<?=lang('ticket_sort_ok')?>" type="button" class="btn btn-success <?=$button_sort_in['ok'];?>"><i class="fa fa-check-circle"></i> </button>  
+                            <button  id="sort_list" value="ilock" data-toggle="tooltip" data-placement="bottom" title="<?=lang('ticket_sort_ilock')?>" type="button" class="btn btn-warning <?=$button_sort_in['ilock'];?>"><i class="fa fa-gavel"></i> </button>  
+                            <button  id="sort_list" value="lock" data-toggle="tooltip" data-placement="bottom" title="<?=lang('ticket_sort_lock')?>" type="button" class="btn btn-default <?=$button_sort_in['lock'];?>"><i class="fa fa-gavel"></i> </button>
+
+                            <button  id="sort_list" value="zak" data-toggle="tooltip" data-placement="bottom" title="<?=lang('ticket_sort_zakup')?>" type="button" class="btn btn-danger <?=$button_sort_in['zak'];?>"><i class="fa fa-rub"></i> </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="btn-group btn-group-justified">
+        <!-- <div class="btn-group btn-group-justified">
             <a class="btn btn-default btn-sm <?= $status_in ?>" role="button" href="?in"><i
                     class="fa fa-download"></i> <?= lang('LIST_in'); ?> <span
                     id="label_list_in"><?= $newtickets ?></span></a>
-				<!--	
+					
             <a class="btn btn-default btn-sm <?= $status_out ?>" role="button" id="link_out" href="?out"><i
                     class="fa fa-upload"></i> <?= lang('LIST_out'); ?> <span
                     id="label_list_out"><?= $out_tickets ?></span> </a>
 					
             <a class="btn btn-default btn-sm <?= $status_arch ?>" role="button" href="?arch"><i
-                    class="fa fa-archive"></i> <?= lang('LIST_arch'); ?></a>-->
-        </div>
+                    class="fa fa-archive"></i> <?= lang('LIST_arch'); ?></a>
+        </div> -->
         <br>
 
         <div id="spinner" class="well well-large well-transparent lead">
@@ -299,6 +314,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
 	case 'free': 	$button_sort_in['free']="active";		break;
 	case 'ilock': 	$button_sort_in['ilock']="active";		break;
 	case 'lock': 	$button_sort_in['lock']="active";		break;
+	case 'zak': 	$button_sort_in['zak']="active";		break;	
 	default: $button_sort_in['main']="active";
 }	
         }

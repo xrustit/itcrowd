@@ -456,6 +456,9 @@ if ($row['is_read'] <> "0") { $style=""; }
                     }
                     if ($lb == 0) {$st=  "<span class=\"label label-primary\"><i class=\"fa fa-clock-o\"></i> ".lang('t_list_a_hold')."</span>";}
                 }
+                if ($row['status'] == 2) {$st=  "<span class=\"label label-info\"><i class=\"fa fa-certificate\"></i> ".lang('t_list_a_noko')." ".nameshort(name_of_user_ret($ob))."</span>";
+                    $t_ago=get_date_ok($row['date_create'], $row['id']);
+                }				
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -568,9 +571,21 @@ $lock_st=""; $muclass="";
 
 
 $ee=explode(",", $unit_user);
+//если есть значение равное 12, удаляем его (для того чтоб в общем списке не отобр-ись группа ЗАКУПКИ)
+if(($key = array_search('12',$ee )) !== FALSE){
+	//echo $key;
+	//print_r($ee[$key]);
+    unset($ee[$key]);
+}
 foreach($ee as $key=>$value) {$in_query = $in_query . ' :val_' . $key . ', '; }
 $in_query = substr($in_query, 0, -2);
 foreach ($ee as $key=>$value) { $vv[":val_" . $key]=$value;}
+
+//var_dump($ee);
+//var_dump($in_query);
+//var_dump($vv);
+
+
 
 $t2date = date("Y-m-d");  //2017-07-13 00:00:00 .$t2date.
 //echo $t2date;
@@ -645,6 +660,21 @@ if (isset($_SESSION['hd.rustem_sort_in'])) {
             $paramss=array(':n'=>'0',':lb'=>$user_id,':start_pos'=>$start_pos,':perpage'=>$perpage);
             $stmt->execute(array_merge($vv,$paramss));}
 			
+	else if ($_SESSION['hd.rustem_sort_in'] == "zak"){$stmt = $dbConnection->prepare('SELECT 
+							id, user_init_id, user_to_id, date_create, subj, msg, client_id, unit_id, status, hash_name, is_read, lock_by, ok_by, prio, last_update, err, tdate
+							from tickets
+							where unit_id=12 and arch=0 and status=0
+							limit :start_pos, :perpage');
+
+            //$paramss=array(':start_pos'=>$start_pos,':perpage'=>$perpage);  //':lb'=>$user_id,
+            //$stmt->execute($paramss);
+			$stmt->execute(array(':start_pos'=>$start_pos,':perpage'=>$perpage));
+			
+			}
+			
+//var_dump($stmt);	
+			
+	
 			
 }
 
@@ -658,6 +688,8 @@ if (!isset($_SESSION['hd.rustem_sort_in'])) {
 
             $paramss=array(':n'=>'0',':start_pos'=>$start_pos,':perpage'=>$perpage);
             $stmt->execute(array_merge($vv,$paramss));
+			
+			//var_dump($stmt);	
 }
             
             $res1 = $stmt->fetchAll();
@@ -712,6 +744,8 @@ $stmt->execute(array_merge($vv,$paramss));
 $paramss=array(':user_id'=>$user_id,':lb'=>$user_id, ':n'=>'0',':n1'=>'0',':n2'=>'0',':start_pos'=>$start_pos,':perpage'=>$perpage);
 $stmt->execute(array_merge($vv,$paramss));
 	}
+
+
 }
 
 
@@ -776,7 +810,16 @@ $stmt->execute(array_merge($vv,$paramss));
 							limit :start_pos, :perpage');
 							$stmt->execute(array(':n'=>'0',':lb'=>$user_id,':start_pos'=>$start_pos,':perpage'=>$perpage));
 			}
-        
+ 			else if ($_SESSION['hd.rustem_sort_in'] == "zak"){
+							$stmt = $dbConnection->prepare('SELECT 
+							id, user_init_id, user_to_id, date_create, subj, msg, client_id, unit_id, status, hash_name, is_read, lock_by, ok_by, prio, last_update, err, tdate
+							from tickets
+							where arch=:n
+							and unit_id=:unitid 							
+                                                        order by ok_by asc, prio desc, id desc
+							limit :start_pos, :perpage');
+							$stmt->execute(array(':n'=>'0',':unitid'=>'12',':start_pos'=>$start_pos,':perpage'=>$perpage));
+			}       
 		
         }
 
@@ -786,6 +829,7 @@ $stmt->execute(array_merge($vv,$paramss));
 							id, user_init_id, user_to_id, date_create, subj, msg, client_id, unit_id, status, hash_name, is_read, lock_by, ok_by, prio, last_update, err, tdate
 							from tickets
 							where arch=:n
+							and unit_id!="12"
 							order by ok_by asc, prio desc, id desc
 							limit :start_pos, :perpage');
 							$stmt->execute(array(':n'=>'0',':start_pos'=>$start_pos,':perpage'=>$perpage));
@@ -923,6 +967,26 @@ if ($row['is_read'] <> "0") { $style=""; }
                         }
 
                     }
+
+                    if ($row['status'] == "2") {
+                        $ob_text="<i class=\"fa fa-circle\"></i>";
+                        $ob_status="ok";
+                        $ob_tooltip=lang('t_list_a_ok');
+                        if ($lb <> "0") {
+                            $lb_text="<i class=\"fa fa-lock\"></i>";
+                            $lb_status="unlock";
+                            $lb_tooltip=lang('t_list_a_unlock');
+                            if ($lb == $user_id) {$style="warning";}
+                            if ($lb <> $user_id) {$style="active";}
+                        }
+
+                        if ($lb == "0") {
+                            $lb_text="<i class=\"fa fa-unlock\"></i>";
+                            $lb_status="lock";
+                            $lb_tooltip=lang('t_list_a_lock');
+                        }
+
+                    }					
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -960,9 +1024,9 @@ if ($row['is_read'] <> "0") { $style=""; }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
+//////////////проверка статуса заявки
 ////////////////////////////Показывает labels//////////////////////////////////////////////////////////////
+
                 if ($row['status'] == 1) {$st=  "<span class=\"label label-success\"><i class=\"fa fa-check-circle\"></i> ".lang('t_list_a_oko')." ".nameshort(name_of_user_ret($ob))."</span>";
                     $t_ago=get_date_ok($row['date_create'], $row['id']);
                 }
@@ -976,6 +1040,9 @@ if ($row['is_read'] <> "0") { $style=""; }
 
                     }
                     if ($lb == 0) {$st=  "<span class=\"label label-primary\"><i class=\"fa fa-clock-o\"></i> ".lang('t_list_a_hold')."</span>";}
+                }
+                if ($row['status'] == 2) {$st=  "<span class=\"label label-info\"><i class=\"fa fa-certificate\"></i> ".lang('t_list_a_noko')." ".nameshort(name_of_user_ret($ob))."</span>";
+                    $t_ago=get_date_ok($row['date_create'], $row['id']);
                 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

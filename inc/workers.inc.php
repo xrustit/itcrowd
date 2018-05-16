@@ -445,12 +445,29 @@ if (isset($_GET['ok'])) {
   <div class="panel-heading"><?=lang('USERS_make_edit');?></div>
   <div class="panel-body"><div class="col-md-12">
 
+<?php
+/* 					$stmt = $dbConnection->prepare('select count(id) as t from tickets where client_id=:id');
+					$stmt->execute(array(':id' => $row['id']));
+					$total_ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+					$tt3=$total_ticket['t'];	 */
 
+    $stmt = $dbConnection->prepare('select count(id) as t1 from tickets where client_id=:id');
+					$stmt->execute(array(':id' => $row['id']));
+    $total_ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+    $tt=$total_ticket['t1'];
+
+    $stmt = $dbConnection->prepare('select count(id) as t2 from tickets where ok_by=0 and client_id=:id');
+					$stmt->execute(array(':id' => $row['id']));
+    $total_ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+    $tt2=$total_ticket['t2'];					
+
+ ?>
 
                     <div class="">
 
                         <div class="panel-body">
-
+						
+							<a target="_blank" href="userinfo?user=<?=$row['id']?>"><?php echo $tt; ?></a> (<?php echo $tt2; ?>)	
 
 
                             <form class="form-horizontal" role="form" id="form_approve">

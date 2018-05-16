@@ -83,7 +83,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
 
                     <?php
                     $user_id=$_SESSION['helpdesk_user_id'];
-
+					
                     if ((priv_status($user_id) == "0")||(priv_status($user_id) == "2")) {
                         $_POST['menu']='list';
                         $_POST['page']="1";
