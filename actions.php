@@ -1118,6 +1118,25 @@ if ($row['is_read'] <> "0") { $style=""; }
                         }
 
                     }
+                    if ($row['status'] == "2") {
+                        $ob_text="<i class=\"fa fa-certificate\"></i>";
+                        $ob_status="ok";
+                        $ob_tooltip=lang('t_list_a_ok');
+                        if ($lb <> "0") {
+                            $lb_text="<i class=\"fa fa-lock\"></i>";
+                            $lb_status="unlock";
+                            $lb_tooltip=lang('t_list_a_unlock');
+                            if ($lb == $user_id) {$style="warning";}
+                            if ($lb <> $user_id) {$style="active";}
+                        }
+
+                        if ($lb == "0") {
+                            $lb_text="<i class=\"fa fa-unlock\"></i>";
+                            $lb_status="lock";
+                            $lb_tooltip=lang('t_list_a_lock');
+                        }
+
+                    }					
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1307,6 +1326,7 @@ switch($sort_type) {
 	case 'ok':	 	$_SESSION['hd.rustem_sort_in']="ok";	break;
 	case 'ilock': 	$_SESSION['hd.rustem_sort_in']="ilock";	break;
 	case 'lock': 	$_SESSION['hd.rustem_sort_in']="lock";	break;
+	case 'zak': 	$_SESSION['hd.rustem_sort_in']="zak";	break;
 	default: 		unset($_SESSION['hd.rustem_sort_in']);
 }	
 
@@ -1457,7 +1477,7 @@ foreach ($ee as $key=>$value) { $vv[":val_" . $key]=$value;}
                 foreach ($results as $arr) {
                     ?>
 
-                    <tr><td style=" width: 100px; vertical-align: inherit;"><small><i class="fa fa-tag"></i> </small><a href="ticket?<?=$arr['hash'];?>"><small><?=lang('TICKET_name');?> #<?=$arr['name'];?></small></a></td><td><small><?=$arr['at'];?></small></td>
+                    <tr><td style=" width: 109px; vertical-align: inherit;"><small><i class="fa fa-tag"></i> </small><a href="ticket?<?=$arr['hash'];?>"><small><?=lang('TICKET_name');?> #<?=$arr['name'];?></small></a></td><td><small><?=$arr['at'];?></small></td>
                     <td style=" width: 110px; vertical-align: inherit;"><small style="float:right;" class="text-muted "> <time id="b" datetime="<?=$arr['time'];?>"></time></small></td></tr>
 
                 <?php
@@ -2701,7 +2721,60 @@ values (:ar, now(), :unow, :tid)');
             <?php
             }
         }
-        if ($mode == "status_ok") {
+
+
+        if ($mode == "status_not") {
+            $user=($_POST['user']);
+            $tid=($_POST['tid']);
+
+
+
+
+            $stmt = $dbConnection->prepare('SELECT status, ok_by FROM tickets where id=:tid');
+            $stmt->execute(array(':tid' => $tid));
+            $fio = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $st=$fio['status'];
+            $ob=$fio['ok_by'];
+
+            $ps=priv_status($ob);
+
+
+            if ($st == "0") {
+                $stmt = $dbConnection->prepare('update tickets set ok_by=:user, status=:s, ok_date=now(), last_update=now() where id=:tid');
+                $stmt->execute(array(':s'=>'2',':tid' => $tid,':user'=>$user));
+
+
+                $unow=$_SESSION['helpdesk_user_id'];
+
+
+/*                 $stmt = $dbConnection->prepare('INSERT INTO ticket_log 
+            (msg, date_op, init_user_id, ticket_id)
+			values (:ok, now(), :unow, :tid)');
+                $stmt->execute(array(':ok'=>'ok',':tid' => $tid,':unow'=>$unow)); */
+
+                ?>
+
+                <div class="alert alert-success"><i class="fa fa-check"></i> Заявка не выполнена ни кем, и упала в список не выполненных со статусом "Не выполнено!"</div>
+
+            <?php
+            }
+	//если выполнениа, то выводим сообщение		
+            if ($st == "1") {
+
+
+
+                ?>
+
+                <div class="alert alert-danger"><?=lang('TICKET_msg_OK_error');?> <?=name_of_user($ob);?></div>
+
+            <?php
+            }             
+
+        }		
+		
+
+		if ($mode == "status_ok") {
 
             $user=($_POST['user']);
             $tid=($_POST['tid']);
@@ -2753,7 +2826,22 @@ values (:no_ok, now(), :unow, :tid)');
                 <div class="alert alert-danger"><?=lang('TICKET_msg_unOK_error');?></div>
             <?php
             }
+            if ($st == "2") {
+				
+				$stmt = $dbConnection->prepare('update tickets set ok_by=:n, status=:n1, last_update=now() where id=:tid');
+                $stmt->execute(array(':tid' => $tid, ':n'=>'0',':n1'=>'0'));
 
+                $unow=$_SESSION['helpdesk_user_id'];
+				
+                $stmt = $dbConnection->prepare('INSERT INTO ticket_log (msg, date_op, init_user_id, ticket_id)
+values (:no_ok, now(), :unow, :tid)');
+                $stmt->execute(array(':tid' => $tid, ':unow'=>$unow,':no_ok'=>'no_ok'));				
+
+                ?>
+				
+                <div class="alert alert-success"><i class="fa fa-certificate"></i> <?=lang('TICKET_msg_unOK');?></div>
+            <?php
+            }
 
         }
 
@@ -2903,7 +2991,7 @@ values (:unlock, now(), :unow, :tid)');
             <div class="alert alert-success"><?=lang('TICKET_msg_refer');?></div>
         <?php
         }
-if ($mode == "edit_user") {
+		if ($mode == "edit_user") {
             $fio=($_POST['fio']);
             $login=($_POST['login']);
 
@@ -2988,7 +3076,7 @@ values (:fio, :login, :pass, :one, :priv, :unit, :mail, :mess, :lang, :priv_add_
 
 
         }
-if ($mode == "save_edit_ticket") {
+		if ($mode == "save_edit_ticket") {
 
 
 
