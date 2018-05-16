@@ -1,4 +1,6 @@
 <?php
+
+
 include_once('conf.php');
 include_once('sys/class.phpmailer.php');
 include_once('sys/Parsedown.php');
@@ -44,10 +46,6 @@ if ($CONF_HD['debug_mode'] == false) {
 error_reporting(E_ALL ^ E_NOTICE);
 error_reporting(0);
 }
-
-
-
-
 
 
 
@@ -1365,6 +1363,10 @@ if (isset($_SESSION['hd.rustem_sort_in'])) {
             $paramss=array(':lb' => $id);
             $stmt->execute(array_merge($vv,$paramss));
             }
+	else if ($_SESSION['hd.rustem_sort_in'] == "zak"){			$stmt = $dbConnection->prepare("SELECT max(last_update) from tickets where unit_id IN (".$in_query.") and arch='0' and (lock_by<>:lb and lock_by<>0) and (status=0)");
+            $paramss=array(':lb' => $id);
+            $stmt->execute(array_merge($vv,$paramss));
+            }			
 }
 
 if (!isset($_SESSION['hd.rustem_sort_in'])) {            
@@ -1417,6 +1419,7 @@ if (isset($_SESSION['hd.rustem_sort_in'])) {
             $stmt->execute(array_merge($vv,$paramss));
 			$max = $stmt->fetch(PDO::FETCH_NUM);
 			$max_id=$max[0];}
+
 }
 
 
@@ -1454,6 +1457,10 @@ if (isset($_SESSION['hd.rustem_sort_in'])) {
             $stmt->execute(array(':lb'=>$id));
             $max = $stmt->fetch(PDO::FETCH_NUM);
 			$max_id=$max[0];}
+	else if ($_SESSION['hd.rustem_sort_in'] == "zak"){			$stmt = $dbConnection->prepare("SELECT max(last_update) from tickets where arch='0' and unit_id=:unitid");
+            $stmt->execute(array(':unitid'=>'12'));
+            $max = $stmt->fetch(PDO::FETCH_NUM);
+			$max_id=$max[0];}			
 }
 
 if (!isset($_SESSION['hd.rustem_sort_in'])) {            
@@ -2070,8 +2077,15 @@ foreach ($ee as $key=>$value) { $vv[":val_" . $key]=$value;}
             $count = $res->fetch(PDO::FETCH_NUM);
             $count=$count[0];
 	}
+	else if ($_SESSION['hd.rustem_sort_in'] == "zak"){
+			$res = $dbConnection->prepare("SELECT count(*) from tickets where unit_id IN (".$in_query.") and arch='0' and (lock_by<>:lb and lock_by<>0) and (status=0)");
+			$paramss=array(':lb'=>$id);
+            $res->execute(array_merge($vv,$paramss));
+            $count = $res->fetch(PDO::FETCH_NUM);
+            $count=$count[0];
+	}	
 }
-
+//echo $res;
 		if (!isset($_SESSION['hd.rustem_sort_in'])) {            
 
 			$res = $dbConnection->prepare("SELECT count(*) from tickets where unit_id IN (".$in_query.") and arch='0'");
@@ -2166,7 +2180,12 @@ else if ($_SESSION['hd.rustem_sort_in'] == "lock"){
             $count = $res->fetch(PDO::FETCH_NUM);
             $count=$count[0];
 }
-
+else if ($_SESSION['hd.rustem_sort_in'] == "zak"){
+	            $res = $dbConnection->prepare("SELECT count(*) from tickets where arch='0' and unit_id=:unitid");
+            $res->execute(array(':unitid'=>'12'));
+            $count = $res->fetch(PDO::FETCH_NUM);
+            $count=$count[0];
+}
            
 }
 if (!isset($_SESSION['hd.rustem_sort_in'])) {
